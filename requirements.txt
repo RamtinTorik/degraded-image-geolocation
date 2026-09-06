@@ -1,0 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cu124
+
+torch
+torchvision
+flask
+numpy
+scipy
+pandas
+scikit-learn
+opencv-python
+Pillow
+tqdm
+joblib
+transformers
+accelerate
+peft
+hydra-core
+pytorch-lightning
+wandb
+reverse_geocoder
+matplotlib

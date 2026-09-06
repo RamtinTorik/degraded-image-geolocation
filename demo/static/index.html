@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ژئولوکیشن مقاوم OSV-5M | دموی پروژه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+
+<header>
+  <div class="header-title">
+    <span class="logo-dot"></span>
+    <div>
+      <h1>ژئولوکیشن مقاوم تصاویر Street-View</h1>
+      <p class="subtitle">ارزیابی افت کیفیت و ماژول ممتنع (Abstention) روی baseline رسمی OSV-5M</p>
+    </div>
+  </div>
+  <nav>
+    <button class="tab-btn active" data-tab="demo">دموی زنده</button>
+    <button class="tab-btn" data-tab="overview">افت عملکرد Corruption</button>
+    <button class="tab-btn" data-tab="confidence">تحلیل اطمینان مدل</button>
+    <button class="tab-btn" data-tab="abstention">Abstention &amp; Risk-Coverage</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ تب دمو زنده ============ -->
+  <section id="tab-demo" class="tab-content active">
+    <div class="panel upload-panel">
+      <h2>یک تصویر آپلود کن</h2>
+      <p class="hint">اگر عکس از subset تست OSV-5M باشه (با نام فایل اصلی)، سیستم به‌صورت خودکار مکان واقعی رو هم شناسایی و مقایسه می‌کنه.</p>
+
+      <div class="upload-row">
+        <label class="file-drop" id="fileDrop">
+          <input type="file" id="imgInput" accept="image/*" hidden>
+          <span id="fileLabel">📁 انتخاب تصویر یا رها کردن اینجا</span>
+        </label>
+      </div>
+
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="single">حالت تکی (انتخاب دستی corruption)</button>
+        <button class="mode-btn" data-mode="all">🔄 اجرای کامل (همه‌ی corruptionها + clean)</button>
+      </div>
+
+      <div class="row manual-controls" id="manualControls">
+        <div class="field">
+          <label>نوع Corruption</label>
+          <select id="corruptionSelect">
+            <option value="none">بدون corruption (clean)</option>
+            <option value="blur">Blur</option>
+            <option value="jpeg">JPEG</option>
+            <option value="noise">Noise</option>
+            <option value="resize">Resize</option>
+            <option value="crop">Crop</option>
+            <option value="lowlight">Low-light</option>
+            <option value="fog">Fog</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>شدت (Severity)</label>
+          <select id="severitySelect">
+            <option value="1">Severity 1 (ملایم)</option>
+            <option value="2">Severity 2 (شدید)</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="runBtn" class="run-btn">▶ اجرای مدل</button>
+      <div id="loadingMsg" class="loading" style="display:none">
+        <span class="spinner"></span> در حال پردازش... (ممکنه چند ثانیه تا چند دقیقه طول بکشه)
+      </div>
+    </div>
+
+    <!-- نتیجه حالت تکی -->
+    <div class="panel results-panel" id="singleResultPanel" style="display:none">
+      <div class="gt-banner" id="gtBanner"></div>
+      <div class="result-grid">
+        <div class="result-image-box">
+          <h3>تصویر ورودی به مدل</h3>
+          <img id="processedImg"/>
+        </div>
+        <div class="result-map-box">
+          <h3>نقشه‌ی موقعیت</h3>
+          <div id="mapSingle" class="map-box"></div>
+        </div>
+      </div>
+      <div class="metrics-grid" id="singleMetrics"></div>
+    </div>
+
+    <!-- نتیجه حالت اجرای کامل -->
+    <div class="panel results-panel" id="allResultPanel" style="display:none">
+      <div class="gt-banner" id="gtBannerAll"></div>
+      <div class="all-layout">
+        <div id="mapAll" class="map-box map-box-large"></div>
+        <div class="all-charts">
+          <canvas id="allErrorChart"></canvas>
+          <canvas id="allEntropyChart"></canvas>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="allResultsTable">
+          <thead>
+            <tr>
+              <th>Corruption</th><th>Severity</th><th>تصویر</th>
+              <th>مختصات پیش‌بینی</th><th>خطا (km)</th>
+              <th>Entropy</th><th>Margin</th><th>Top-1</th><th>تصمیم</th>
+            </tr>
+          </thead>
+          <tbody id="allResultsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ تب افت عملکرد ============ -->
+  <section id="tab-overview" class="tab-content">
+    <div class="panel chart-panel">
+      <h2>دقت پیش‌بینی کشور بر اثر هر نوع Corruption</h2>
+      <canvas id="corruptionAccChart"></canvas>
+      <p class="chart-desc">این نمودار دقت مدل در تشخیص صحیح کشور (خطای کمتر از ۷۵۰ کیلومتر) رو برای حالت clean و هر ۱۴ ترکیب corruption×severity نشون می‌ده. هرچه ستون کوتاه‌تر باشه، اون نوع افت کیفیت آسیب بیشتری به عملکرد مدل زده.</p>
+    </div>
+
+    <div class="panel chart-panel">
+      <h2>میانگین خطای مکانی (کیلومتر) بر اثر هر Corruption</h2>
+      <canvas id="corruptionErrorChart"></canvas>
+      <p class="chart-desc">میانگین فاصله‌ی هاورساین (فاصله‌ی واقعی روی کره‌ی زمین) بین پیش‌بینی مدل و مکان واقعی. برخلاف نمودار دقت کشور، این نمودار به خطاهای خیلی بزرگ (outlier) حساس‌تره و شدت واقعی اشتباهات رو بهتر نشون می‌ده.</p>
+    </div>
+
+    <div class="panel chart-panel">
+      <h2>نرخ Reject شدن توسط ماژول Abstention، به تفکیک نوع Corruption</h2>
+      <canvas id="rejectRateChart"></canvas>
+      <p class="chart-desc">این نمودار نشون می‌ده مدل ممتنع (بدون این‌که بدونه چه corruption‌ای اعمال شده) چند درصد از نمونه‌های هر گروه رو "نامطمئن" تشخیص داده و reject کرده. هرچه corruption مخرب‌تر باشه (مثل JPEG severity 2)، نرخ reject هم بالاتره — یعنی مدل ناخودآگاه سختی واقعی تصویر رو حس می‌کنه.</p>
+    </div>
+  </section>
+
+  <!-- ============ تب تحلیل اطمینان مدل ============ -->
+  <section id="tab-confidence" class="tab-content">
+    <div class="panel chart-panel">
+      <h2>توزیع Entropy: تصاویر Clean در مقابل Corrupted</h2>
+      <canvas id="entropyHistChart"></canvas>
+      <p class="chart-desc">هیستوگرام entropy (میزان عدم‌قطعیت درونی مدل). جابه‌جایی توزیع تصاویر corrupted به سمت راست (entropy بالاتر) نشون می‌ده مدل به‌طور سیستماتیک روی تصاویر خراب‌شده احساس عدم‌اطمینان بیشتری می‌کنه — این پایه‌ی اصلی کارکرد ماژول abstention‌ست.</p>
+    </div>
+
+    <div class="panel chart-panel">
+      <h2>رابطه‌ی Entropy با خطای واقعی (تحلیل Decile)</h2>
+      <canvas id="decileChart"></canvas>
+      <p class="chart-desc">نمونه‌ها بر اساس entropy به ۱۰ گروه مساوی (decile) تقسیم شدن. محور راست میانگین خطا و محور چپ دقت کشور رو برای هر گروه نشون می‌ده. روند نزولی واضح دقت (و صعودی خطا) با افزایش entropy، همبستگی قوی بین اطمینان مدل و درستی پیش‌بینی رو اثبات می‌کنه.</p>
+    </div>
+
+    <div class="panel chart-panel">
+      <h2>اهمیت هر معیار در مدل Abstention (Logistic Regression)</h2>
+      <canvas id="featureImportanceChart"></canvas>
+      <p class="chart-desc">وزن نسبی هر یک از سه معیار اطمینان (top1_score، margin، entropy) در تصمیم نهایی مدل ممتنع. این نشون می‌ده کدوم سیگنال بیشترین نقش رو در تشخیص نمونه‌های نامطمئن داره.</p>
+    </div>
+  </section>
+
+  <!-- ============ تب Abstention ============ -->
+  <section id="tab-abstention" class="tab-content">
+    <div class="panel chart-panel">
+      <h2>Risk-Coverage Curve: Clean در مقابل Corrupted</h2>
+      <canvas id="riskCoverageChart"></canvas>
+      <p class="chart-desc">این نمودار نشون می‌ده اگر مدل اجازه داشته باشه درصدی از نمونه‌های نامطمئن رو رد کنه (محور افقی: درصد نمونه‌های نگه‌داشته‌شده)، دقت روی باقی‌مونده چقدر بهبود پیدا می‌کنه. فاصله‌ی زیاد بین دو خط نشون می‌ده abstention روی داده‌ی خراب‌شده اثر مهم‌تری داره.</p>
+    </div>
+
+    <div class="panel chart-panel">
+      <h2>مقایسه‌ی دقت قبل و بعد از Abstention به تفکیک Corruption</h2>
+      <canvas id="beforeAfterChart"></canvas>
+      <p class="chart-desc">مقایسه‌ی مستقیم دقت کشور "قبل از اعمال abstention" و "بعد از reject کردن نمونه‌های نامطمئن" برای هر نوع corruption. این جدول دقیقاً همون چیزیه که در پروپوزال به‌عنوان "مقایسه‌ی قبل/بعد" خواسته شده.</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

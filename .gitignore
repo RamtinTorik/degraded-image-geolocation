@@ -1,0 +1,43 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+*.egg-info/
+
+# Local OSV5M data and downloaded model weights
+data/
+codes/baseline-huggingface/baseline/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# Generated experiment outputs
+results/
+datasets/subset_test/images/
+datasets/subset_test_calib/images/
+datasets/subset_train_calib/images/
+datasets/**/*.zip
+
+# Local notebooks and editor files
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Nested repository metadata and build artifacts
+**/.git/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Private project paperwork and local research archive
+فرم ها/
+مقالات/
+*.docx
+*.pdf

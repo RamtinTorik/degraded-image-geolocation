@@ -1,0 +1,34 @@
+defaults:
+  - train_transform: fast_clip
+  - test_transform: fast_clip
+  - _self_
+
+name: osv5m
+global_batch_size: 256
+
+train_dataset:
+  _partial_: true
+  _target_: data.data.TextContrastiveosv5m
+  path: ${data_dir}/osv5m/
+  split: train
+  class_name: ${class_name}
+  transforms: ${dataset.train_transform}
+  blur: ${blur}
+
+val_dataset:
+  _partial_: true
+  _target_: data.data.TextContrastiveosv5m
+  path: ${data_dir}/osv5m/
+  split: val
+  class_name: ${class_name}
+  transforms: ${dataset.test_transform}
+  blur: ${blur}
+
+test_dataset:
+  _partial_: true
+  _target_: data.data.TextContrastiveosv5m
+  path: ${data_dir}/osv5m/
+  split: test
+  class_name: ${class_name}
+  transforms: ${dataset.test_transform}
+  blur: ${blur}

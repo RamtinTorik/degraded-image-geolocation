@@ -1,0 +1,11 @@
+calibration_strategy,target_coverage,selective_acc_on_held_out_corrupted_pct
+calibrated_on_clean_only,0.9,44.208873184138206
+calibrated_on_clean_only,0.8,48.67847061842443
+calibrated_on_clean_only,0.7,52.885225110970204
+calibrated_on_clean_only,0.6,59.601113172541744
+calibrated_on_clean_only,0.5,63.23257248611968
+calibrated_on_clean_plus_corrupted,0.9,46.37773528786913
+calibrated_on_clean_plus_corrupted,0.8,50.518203560988574
+calibrated_on_clean_plus_corrupted,0.7,56.03015075376885
+calibrated_on_clean_plus_corrupted,0.6,61.875
+calibrated_on_clean_plus_corrupted,0.5,66.3111668757842

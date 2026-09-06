@@ -16,8 +16,7 @@ codes/baseline-huggingface/baseline/
 *.pth
 *.ckpt
 
-# Generated experiment outputs
-results/
+# Generated subset images remain local; experiment results are tracked.
 datasets/subset_test/images/
 datasets/subset_test_calib/images/
 datasets/subset_train_calib/images/

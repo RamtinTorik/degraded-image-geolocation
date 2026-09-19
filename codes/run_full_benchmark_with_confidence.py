@@ -75,7 +75,7 @@ combos = [(None, None, "clean")] + [(CORRUPTIONS[n], s, f"{n}_sev{s}") for n in 
 for fn, sev, tag in combos:
     out_csv = os.path.join(RESULTS_DIR, f"{tag}_with_confidence.csv")
     if os.path.exists(out_csv):
-        print(f"⏭️ رد شد: {tag}")
+        print(f"رد شد: {tag}")
         out_df = pd.read_csv(out_csv)
     else:
         out_df = run_inference_with_confidence(fn, sev, tag)

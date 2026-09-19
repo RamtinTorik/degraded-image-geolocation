@@ -10,7 +10,7 @@ from corruptions import CORRUPTIONS, SEVERITIES
 
 SUBSET_DIR = SUBSET_TEST_DIR
 OUTPUT_DIR = RESULTS_DIR / "example_corrupted_images"
-N_EXAMPLES = 5   # تعداد عکس‌های نمونه برای گزارش (می‌تونی بیشتر/کمترش کنی)
+N_EXAMPLES = 5   # تعداد عکس‌های نمونه برای گزارش
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 

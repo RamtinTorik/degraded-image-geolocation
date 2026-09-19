@@ -35,7 +35,7 @@ for img_name in all_images:
             save_path = os.path.join(img_folder, f"{corruption_name}_sev{severity}.jpg")
             corrupted.save(save_path)
 
-    print(f"✅ نمونه‌های {img_id} ذخیره شدن در {img_folder}")
+    print(f"نمونه‌های {img_id} ذخیره شدن در {img_folder}")
 
-print(f"\n🎉 تمام شد. {N_EXAMPLES} عکس نمونه × {len(CORRUPTIONS)} نوع corruption × {len(SEVERITIES)} severity ذخیره شد.")
+print(f"\nتمام شد. {N_EXAMPLES} عکس نمونه × {len(CORRUPTIONS)} نوع corruption × {len(SEVERITIES)} severity ذخیره شد.")
 print(f"مسیر: {OUTPUT_DIR}")

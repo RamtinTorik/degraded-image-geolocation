@@ -57,4 +57,4 @@ out_df = pd.DataFrame(results)
 out_path = RESULTS_DIR / "clean" / "baseline_predictions.csv"
 os.makedirs(os.path.dirname(out_path), exist_ok=True)
 out_df.to_csv(out_path, index=False)
-print("اجرای baseline تموم شد، نتایج ذخیره شد در:", out_path)
+print("اجرای baseline نتایج ذخیره شد در:", out_path)

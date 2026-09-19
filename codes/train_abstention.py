@@ -63,7 +63,7 @@ abstention_artifact = {
 }
 with open(MODEL_OUT_PATH, "wb") as f:
     pickle.dump(abstention_artifact, f)
-print(f"✅ مدل ذخیره شد در: {MODEL_OUT_PATH}")
+print(f"مدل ذخیره شد در: {MODEL_OUT_PATH}")
 
 
 # گام ۳: ارزیابی نهایی روی داده‌ی کاملاً جدا
@@ -110,5 +110,5 @@ for subset_name, subset_df in [("clean", clean_final), ("corrupted", corrupted_f
 
 comparison_df = pd.DataFrame(rows)
 comparison_df.to_csv(COMPARISON_OUT_PATH, index=False)
-print(f"\n✅ جدول مقایسه‌ی before/after ذخیره شد در: {COMPARISON_OUT_PATH}")
+print(f"\nجدول مقایسه‌ی before/after ذخیره شد در: {COMPARISON_OUT_PATH}")
 print(comparison_df.to_string(index=False))

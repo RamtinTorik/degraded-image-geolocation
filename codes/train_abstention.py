@@ -36,15 +36,15 @@ def load_and_fix(path):
     return df
 
 
-# ============ گام ۱: بارگذاری calibration و آموزش مدل ============
+# گام ۱: بارگذاری calibration و آموزش مدل
 print("در حال بارگذاری calibration set...")
 calib = load_and_fix(CALIB_PATH)
 calib["correct"] = (calib["error_km"] < COUNTRY_THRESHOLD_KM).astype(int)
 
-# --- رویکرد ۱: threshold ساده روی entropy ---
+# رویکرد ۱: threshold ساده روی entropy
 entropy_thresholds = {cov: calib["entropy"].quantile(cov) for cov in TARGET_COVERAGES}
 
-# --- رویکرد ۲: Logistic Regression ---
+# رویکرد ۲: Logistic Regression
 X_calib = calib[["top1_score", "margin", "entropy"]].values
 y_calib = calib["correct"].values
 clf = LogisticRegression()
@@ -53,7 +53,7 @@ clf.fit(X_calib, y_calib)
 print("مدل abstention آموزش داده شد.")
 print("ضرایب LR:", dict(zip(["top1_score", "margin", "entropy"], clf.coef_[0])))
 
-# ============ گام ۲: ذخیره‌ی رسمی مدل ============
+# گام ۲: ذخیره‌ی رسمی مدل
 abstention_artifact = {
     "logistic_regression": clf,
     "entropy_thresholds_by_coverage": entropy_thresholds,
@@ -66,7 +66,7 @@ with open(MODEL_OUT_PATH, "wb") as f:
 print(f"✅ مدل ذخیره شد در: {MODEL_OUT_PATH}")
 
 
-# ============ گام ۳: ارزیابی نهایی روی داده‌ی کاملاً جدا (held-out) ============
+# گام ۳: ارزیابی نهایی روی داده‌ی کاملاً جدا
 print("\nدر حال بارگذاری داده‌ی کامل تست (clean + corrupted)...")
 full = load_and_fix(ALL_CONF_PATH)
 full["p_correct"] = clf.predict_proba(full[["top1_score", "margin", "entropy"]].values)[:, 1]
@@ -76,7 +76,7 @@ corrupted_final = full[full["corruption_type"] != "clean"].copy()
 
 rows = []
 
-# --- baseline بدون abstention (خط مرجع) ---
+# baseline بدون abstention (خط مرجع)
 rows.append({
     "subset": "clean", "method": "no_abstention", "target_coverage": 1.0,
     "actual_coverage_pct": 100.0,
@@ -88,7 +88,7 @@ rows.append({
     "selective_country_acc_pct": (corrupted_final["error_km"] < COUNTRY_THRESHOLD_KM).mean() * 100,
 })
 
-# --- روش threshold ساده (entropy) ---
+# روش threshold ساده (entropy)
 for subset_name, subset_df in [("clean", clean_final), ("corrupted", corrupted_final)]:
     for cov, thr in entropy_thresholds.items():
         kept = subset_df[subset_df["entropy"] <= thr]
@@ -98,7 +98,7 @@ for subset_name, subset_df in [("clean", clean_final), ("corrupted", corrupted_f
             "selective_country_acc_pct": (kept["error_km"] < COUNTRY_THRESHOLD_KM).mean() * 100 if len(kept) else np.nan,
         })
 
-# --- روش Logistic Regression ---
+# روش Logistic Regression
 for subset_name, subset_df in [("clean", clean_final), ("corrupted", corrupted_final)]:
     for p_thr in [0.0, 0.3, 0.4, 0.5, 0.6, 0.7]:
         kept = subset_df[subset_df["p_correct"] >= p_thr]

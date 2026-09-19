@@ -44,9 +44,8 @@ corrupted_final = full[full["corruption_type"] != "clean"].copy()
 
 TARGET_COVERAGES = [0.9, 0.8, 0.7, 0.6, 0.5]
 
-# ========================================================================
 # آزمایش ۱: مقایسه‌ی feature-هایی که به تنهایی یا با هم استفاده میشن
-# ========================================================================
+
 print("="*70)
 print("آزمایش ۱: اهمیت هر Feature (تک‌تک در مقابل ترکیبی)")
 print("="*70)
@@ -80,9 +79,7 @@ feat_df = pd.DataFrame(rows_feat)
 feat_df.to_csv(os.path.join(OUT_DIR, "ablation_feature_sets.csv"), index=False)
 print(feat_df.pivot_table(index=["subset", "target_coverage"], columns="feature_set", values="selective_acc_pct").round(1))
 
-# ========================================================================
 # آزمایش ۲: حساسیت به threshold (coverage گسترده‌تر، شامل حالت‌های افراطی)
-# ========================================================================
 print("\n" + "="*70)
 print("آزمایش ۲: حساسیت به Threshold (coverage از ۱۰۰٪ تا ۱۰٪)")
 print("="*70)
@@ -106,9 +103,7 @@ sens_df = pd.DataFrame(rows_sens)
 sens_df.to_csv(os.path.join(OUT_DIR, "ablation_threshold_sensitivity.csv"), index=False)
 print(sens_df.pivot_table(index="target_coverage", columns="subset", values="selective_acc_pct").round(1))
 
-# ========================================================================
 # آزمایش ۳: calibration با فقط clean در مقابل calibration با clean+corrupted
-# ========================================================================
 print("\n" + "="*70)
 print("آزمایش ۳: تاثیر دیدن Corruption در حین Calibration")
 print("="*70)
@@ -142,4 +137,4 @@ cal_df = pd.DataFrame(rows_cal)
 cal_df.to_csv(os.path.join(OUT_DIR, "ablation_calibration_strategy.csv"), index=False)
 print(cal_df.pivot_table(index="target_coverage", columns="calibration_strategy", values="selective_acc_on_held_out_corrupted_pct").round(1))
 
-print(f"\n✅ همه‌ی نتایج ablation در پوشه‌ی زیر ذخیره شد:\n{OUT_DIR}")
+print(f"\nهمه‌ی نتایج ablation در پوشه‌ی زیر ذخیره شد:\n{OUT_DIR}")

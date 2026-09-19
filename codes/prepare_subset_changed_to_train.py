@@ -50,4 +50,4 @@ for _, row in df_avail.iterrows():
 cols_to_keep = ["id", "latitude", "longitude", "country", "region", "sub-region", "city"]
 df_avail[cols_to_keep].to_csv(os.path.join(OUTPUT_DIR, "subset_metadata.csv"), index=False)
 
-print("✅ subset calibration ساخته شد در:", OUTPUT_DIR)
+print("subset calibration ساخته شد در:", OUTPUT_DIR)

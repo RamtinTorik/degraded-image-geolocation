@@ -1,4 +1,4 @@
-# run_baseline.py (نسخه‌ی بهینه‌شده با batch processing)
+# run_baseline.py نسخه‌ی بهینه‌شده با batch processing
 
 import sys, os
 from paths import OSV5M_REPO, SUBSET_TEST_DIR, BASELINE_PATH, RESULTS_DIR
@@ -13,7 +13,7 @@ from tqdm import tqdm
 from models.huggingface import Geolocalizer
 
 SUBSET_DIR = SUBSET_TEST_DIR
-BATCH_SIZE = 16   # اگه RAM اذیت کرد، به 8 کاهش بده
+BATCH_SIZE = 16   # اگه RAM اذیت کرد، به 8 کاهش داده شود
 
 geoloc = Geolocalizer.from_pretrained(BASELINE_PATH)
 geoloc.eval()
@@ -57,4 +57,4 @@ out_df = pd.DataFrame(results)
 out_path = RESULTS_DIR / "clean" / "baseline_predictions.csv"
 os.makedirs(os.path.dirname(out_path), exist_ok=True)
 out_df.to_csv(out_path, index=False)
-print("✅ اجرای baseline تموم شد، نتایج ذخیره شد در:", out_path)
+print("اجرای baseline تموم شد، نتایج ذخیره شد در:", out_path)

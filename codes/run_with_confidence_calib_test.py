@@ -66,5 +66,5 @@ with torch.no_grad():
 out_df = pd.DataFrame(results)
 out_path = os.path.join(RESULTS_DIR, "calib_test_with_confidence.csv")
 out_df.to_csv(out_path, index=False)
-print(f"✅ ذخیره شد: {out_path}")
+print(f"ذخیره شد: {out_path}")
 print(out_df[["top1_score","margin","entropy","error_km"]].describe())

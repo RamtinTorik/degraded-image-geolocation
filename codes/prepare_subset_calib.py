@@ -13,7 +13,7 @@ RANDOM_SEED = 777   # seed متفاوت از قبلی‌ها
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(os.path.join(OUTPUT_DIR, "images"), exist_ok=True)
 
-# ===== id هایی که قبلاً توی subset اصلی (۱۱۰۰ تایی) استفاده شدن رو کنار می‌ذاریم =====
+# id هایی که قبلاً توی subset اصلی (۱۱۰۰ تایی) استفاده شدن رو کنار می‌ذاریم
 existing_ids = set(pd.read_csv(EXISTING_SUBSET_METADATA)["id"].astype(str))
 print("تعداد id های قبلاً استفاده‌شده (باید حذف بشن):", len(existing_ids))
 
@@ -29,7 +29,7 @@ for root, dirs, files in os.walk(TEST_IMG_DIR):
 
 df_avail = df[df["id_str"].isin(available_files.keys())].copy()
 
-# ===== حذف عکس‌هایی که در subset اصلی هستن (جلوگیری از نشتی/overlap) =====
+# حذف عکس‌هایی که در subset اصلی هستن (جلوگیری از overlap)
 df_avail = df_avail[~df_avail["id_str"].isin(existing_ids)].copy()
 print("تعداد رکورد باقی‌مونده بعد از حذف overlap:", len(df_avail))
 
@@ -48,9 +48,9 @@ if len(df_avail) > MAX_TOTAL:
 print("تعداد نهایی subset calibration:", len(df_avail))
 print("تعداد کشورهای متفاوت:", df_avail["country"].nunique())
 
-# ===== تایید نهایی نبود overlap =====
+# تایید نهایی نبود overlap
 overlap_check = set(df_avail["id_str"]) & existing_ids
-print("بررسی overlap (باید 0 باشه):", len(overlap_check))
+print("بررسی overlap:", len(overlap_check))
 
 for _, row in df_avail.iterrows():
     src = available_files[row["id_str"]]
@@ -60,4 +60,4 @@ for _, row in df_avail.iterrows():
 cols_to_keep = ["id", "latitude", "longitude", "country", "region", "sub-region", "city"]
 df_avail[cols_to_keep].to_csv(os.path.join(OUTPUT_DIR, "subset_metadata.csv"), index=False)
 
-print("✅ subset calibration (بدون overlap با test اصلی) ساخته شد در:", OUTPUT_DIR)
+print("subset calibration (بدون overlap با test اصلی) ساخته شد در:", OUTPUT_DIR)

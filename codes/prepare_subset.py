@@ -6,10 +6,9 @@ import shutil
 import math
 from paths import TEST_CSV, TEST_IMG_DIR, SUBSET_TEST_DIR
 
-# ===== تنظیمات =====
 OUTPUT_DIR = SUBSET_TEST_DIR
 
-MAX_TOTAL = 1100            # <-- همینجا اندازه‌ی subset رو تغییر بده
+MAX_TOTAL = 1100
 RANDOM_SEED = 42
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -53,4 +52,4 @@ for _, row in df_avail.iterrows():
 cols_to_keep = ["id", "latitude", "longitude", "country", "region", "sub-region", "city"]
 df_avail[cols_to_keep].to_csv(os.path.join(OUTPUT_DIR, "subset_metadata.csv"), index=False)
 
-print("✅ subset ساخته شد در:", OUTPUT_DIR)
+print("subset ساخته شد در:", OUTPUT_DIR)

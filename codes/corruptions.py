@@ -1,4 +1,4 @@
-# corruptions.py (کتابخانه‌ی توابع corruption)
+# corruptionsتوابع
 
 import numpy as np
 import cv2

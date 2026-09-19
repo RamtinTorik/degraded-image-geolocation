@@ -8,7 +8,7 @@ from PIL import Image
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
-# ===== مسیرها =====
+# مسیرها
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OSV5M_REPO = PROJECT_ROOT / "codes" / "github-osv5m" / "osv5m"
 CODES_DIR = PROJECT_ROOT / "codes"
@@ -52,11 +52,11 @@ def img_to_thumb_b64(img, max_size=220, quality=70):
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
 
-# ================= بارگذاری مدل و داده‌ها (فقط یک‌بار، هنگام استارت) =================
+# بارگذاری مدل و داده‌ها (فقط یک‌بار، هنگام استارت)
 print("در حال بارگذاری مدل baseline...")
 geoloc = Geolocalizer.from_pretrained(BASELINE_PATH)
 geoloc.eval()
-print("✅ مدل آماده شد.")
+print("مدل آماده شد.")
 
 with open(ABSTENTION_MODEL_PATH, "rb") as f:
     abstention = pickle.load(f)
@@ -66,7 +66,7 @@ print("در حال بارگذاری متادیتای تست (برای تشخیص
 test_meta = pd.read_csv(TEST_METADATA_CSV)
 test_meta["id_str"] = test_meta["id"].astype(str)
 test_meta_lookup = test_meta.set_index("id_str").to_dict(orient="index")
-print(f"✅ {len(test_meta_lookup)} رکورد متادیتای تست بارگذاری شد.")
+print(f"{len(test_meta_lookup)} رکورد متادیتای تست بارگذاری شد.")
 
 
 def fix_confidence_df(path):
@@ -93,7 +93,7 @@ all_conf_df["correct"] = all_conf_df["error_km"] < COUNTRY_ACC_THRESHOLD_KM
 summary_df = pd.read_csv(SUMMARY_CSV)
 comparison_df = pd.read_csv(COMPARISON_CSV)
 
-# ---- پیش‌محاسبه‌ی جدول جامع "تاثیر هر corruption" (entropy, error, reject rate, acc before/after) ----
+# پیش‌محاسبه‌ی جدول جامع "تاثیر هر corruption" (entropy, error, reject rate, acc before/after)
 corruption_impact_df = all_conf_df.groupby(["corruption_type", "severity"]).apply(
     lambda g: pd.Series({
         "n": len(g),
@@ -110,7 +110,7 @@ order = ["clean"] + CORRUPTION_ORDER
 corruption_impact_df["corruption_type"] = pd.Categorical(corruption_impact_df["corruption_type"], categories=order, ordered=True)
 corruption_impact_df = corruption_impact_df.sort_values(["corruption_type", "severity"])
 
-# ---- هیستوگرام entropy: clean در مقابل corrupted ----
+# هیستوگرام entropy: clean در مقابل corrupted
 bins = np.linspace(0, all_conf_df["entropy"].max(), 21)
 clean_entropy = all_conf_df.loc[all_conf_df["corruption_type"] == "clean", "entropy"]
 corrupted_entropy = all_conf_df.loc[all_conf_df["corruption_type"] != "clean", "entropy"]
@@ -118,7 +118,7 @@ clean_hist, _ = np.histogram(clean_entropy, bins=bins)
 corrupted_hist, _ = np.histogram(corrupted_entropy, bins=bins, density=False)
 corrupted_hist_norm = corrupted_hist / (all_conf_df["corruption_type"] != "clean").sum() * len(clean_entropy)  # نرمال‌سازی برای مقایسه‌ی شکلی
 
-# ---- تحلیل decile: رابطه‌ی entropy با خطا (نسخه‌ی ریزتر از quartile) ----
+# تحلیل decile: رابطه‌ی entropy با خطا (نسخه‌ی ریزتر از quartile)
 all_conf_df["entropy_decile"] = pd.qcut(all_conf_df["entropy"], 10, labels=False, duplicates="drop")
 decile_df = all_conf_df.groupby("entropy_decile").agg(
     mean_entropy=("entropy", "mean"),
@@ -127,7 +127,7 @@ decile_df = all_conf_df.groupby("entropy_decile").agg(
     n=("entropy", "count"),
 ).reset_index()
 
-# ---- اهمیت فیچرها (از ضرایب Logistic Regression) ----
+# اهمیت فیچرها (از ضرایب Logistic Regression)
 feat_names = ["top1_score", "margin", "entropy"]
 coefs = clf.coef_[0]
 importance_df = pd.DataFrame({
@@ -136,7 +136,7 @@ importance_df = pd.DataFrame({
     "abs_importance_pct": np.abs(coefs) / np.abs(coefs).sum() * 100,
 })
 
-print("✅ همه‌ی پیش‌محاسبات آماده شد. سرور در حال اجراست.")
+print("همه‌ی پیش‌محاسبات آماده شد. سرور در حال اجراست.")
 
 app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="")
 
@@ -217,7 +217,7 @@ def api_predict():
 
     original_img = Image.open(img_file.stream).convert("RGB")
 
-    # ===== تشخیص خودکار: آیا این عکس از دیتاست تسته؟ =====
+    # تشخیص خودکار که آیا این عکس از دیتاست تسته؟
     gt = test_meta_lookup.get(file_id)
     is_known = gt is not None
     true_lat = gt["latitude"] if is_known else None

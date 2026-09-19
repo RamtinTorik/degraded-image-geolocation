@@ -80,11 +80,11 @@ for fn, sev, tag in combos:
     else:
         out_df = run_inference_with_confidence(fn, sev, tag)
         out_df.to_csv(out_csv, index=False)
-        print(f"✅ ذخیره شد: {out_csv}")
+        print(f"ذخیره شد: {out_csv}")
     all_dfs.append(out_df)
 
 full_df = pd.concat(all_dfs, ignore_index=True)
 full_path = os.path.join(RESULTS_DIR, "all_with_confidence.csv")
 full_df.to_csv(full_path, index=False)
-print(f"\n🎉 فایل جامع ذخیره شد: {full_path}")
+print(f"\nفایل جامع ذخیره شد: {full_path}")
 print(f"تعداد کل رکورد: {len(full_df)}")

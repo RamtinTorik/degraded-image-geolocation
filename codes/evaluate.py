@@ -56,11 +56,11 @@ if __name__ == "__main__":
 
     metrics, df_with_errors = evaluate_predictions(CLEAN_CSV, corruption_type="clean", severity="none")
 
-    print("===== نتایج ارزیابی (Clean Baseline) =====")
+    print("نتایج ارزیابی (Clean Baseline)")
     for k, v in metrics.items():
         print(f"{k}: {v:.2f}" if isinstance(v, float) else f"{k}: {v}")
 
     df_with_errors.to_csv(CLEAN_CSV.replace(".csv", "_with_errors.csv"), index=False)
     summary = append_to_summary(metrics, SUMMARY_PATH)
-    print("\n✅ جدول خلاصه ذخیره شد در:", SUMMARY_PATH)
+    print("\nجدول خلاصه ذخیره شد در:", SUMMARY_PATH)
     print(summary)

@@ -75,5 +75,5 @@ if __name__ == "__main__":
     out_df = run_inference_with_confidence(None, None, "clean_with_confidence")
     out_path = os.path.join(RESULTS_DIR, "clean_with_confidence.csv")
     out_df.to_csv(out_path, index=False)
-    print(f"✅ ذخیره شد: {out_path}")
+    print(f"ذخیره شد: {out_path}")
     print(out_df[["top1_score", "margin", "entropy"]].describe())

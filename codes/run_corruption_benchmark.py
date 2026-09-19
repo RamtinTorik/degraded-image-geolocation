@@ -1,5 +1,4 @@
-# run_corruption_benchmark.py (اسکریپت اصلی هفته ۲)
-
+# run_corruption_benchmark.py اسکریپت اصلی
 import sys, os
 from paths import OSV5M_REPO, CODES_DIR, SUBSET_TEST_DIR, BASELINE_PATH, RESULTS_DIR
 
@@ -61,7 +60,7 @@ def run_inference_with_corruption(corruption_fn, severity):
     return pd.DataFrame(results)
 
 
-# ===== حلقه‌ی اصلی روی تمام corruption × severity =====
+# حلقه‌ی اصلی روی تمام corruption × severity
 all_combos = [(name, sev) for name in CORRUPTIONS for sev in SEVERITIES]
 print(f"تعداد کل حالت‌های corruption: {len(all_combos)}")
 
@@ -69,16 +68,16 @@ for corruption_name, severity in all_combos:
     out_csv = os.path.join(RESULTS_DIR, f"{corruption_name}_sev{severity}_predictions.csv")
 
     if os.path.exists(out_csv):
-        print(f"⏭️  رد شد (از قبل موجوده): {corruption_name} severity {severity}")
+        print(f"رد شد (از قبل موجوده): {corruption_name} severity {severity}")
     else:
         corruption_fn = CORRUPTIONS[corruption_name]
         out_df = run_inference_with_corruption(corruption_fn, severity)
         out_df.to_csv(out_csv, index=False)
-        print(f"✅ ذخیره شد: {out_csv}")
+        print(f"ذخیره شد: {out_csv}")
 
     metrics, _ = evaluate_predictions(out_csv, corruption_type=corruption_name, severity=str(severity))
     append_to_summary(metrics, SUMMARY_PATH)
     print(f"   -> mean_error_km={metrics['mean_error_km']:.1f} | acc_country_750km={metrics['acc_country_750km']:.1f}%")
 
-print("\n🎉 کل benchmark هفته ۲ تموم شد. جدول نهایی:")
+print("\nکل benchmark جدول نهایی:")
 print(pd.read_csv(SUMMARY_PATH))

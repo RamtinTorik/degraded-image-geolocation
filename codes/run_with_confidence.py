@@ -48,7 +48,7 @@ def run_inference_with_confidence(corruption_fn, severity, tag):
 
             x = torch.stack(imgs)
 
-            # ===== این بخش جدیده: دسترسی مستقیم به کل خروجی مدل، نه فقط gps =====
+            # دسترسی مستقیم به کل خروجی مدل
             output = geoloc.head(geoloc.mid(geoloc.backbone({"img": x})), None)
             gps = output["gps"]
             logits = output["label"]
@@ -71,7 +71,7 @@ def run_inference_with_confidence(corruption_fn, severity, tag):
 
 
 if __name__ == "__main__":
-    # ===== مرحله ۱: فقط روی clean تست کن (برای اطمینان از درستی کد) =====
+    # برای اطمینان از درستی کد
     out_df = run_inference_with_confidence(None, None, "clean_with_confidence")
     out_path = os.path.join(RESULTS_DIR, "clean_with_confidence.csv")
     out_df.to_csv(out_path, index=False)
